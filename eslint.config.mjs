@@ -4,7 +4,7 @@ import eslintPluginPrettier from 'eslint-plugin-prettier/recommended';
 
 export default tseslint.config(
   {
-    ignores: ['dist']
+    ignores: ['dist', 'generated/prisma']
   },
   eslint.configs.recommended,
   tseslint.configs.recommended,
