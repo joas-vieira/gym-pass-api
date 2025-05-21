@@ -5,7 +5,7 @@ import { UserRepository } from '../user.repository';
 export class InMemoryUserRepository implements UserRepository {
   private items: User[] = [];
 
-  async findById(id: string) {
+  async findById(id: string): Promise<User | null> {
     const user = this.items.find((user) => user.id === id);
 
     if (!user) {
@@ -15,7 +15,7 @@ export class InMemoryUserRepository implements UserRepository {
     return user;
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<User | null> {
     const user = this.items.find((user) => user.email === email);
 
     if (!user) {

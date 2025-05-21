@@ -1,9 +1,14 @@
 import { CheckInRepository } from '@/repositories/check-in.repository';
+import { GymRepository } from '@/repositories/gym.repository';
 import { CheckIn } from 'generated/prisma';
+import { ResourceNotFoundError } from './errors/resource-not-found.error';
+import { getDistanceBetweenCoordinates } from '@/utils/get-distance-between-coordinates';
 
 interface CheckInUseCaseRequest {
   userId: string;
   gymId: string;
+  userLatitude: number;
+  userLongitude: number;
 }
 
 interface CheckInUseCaseResponse {
@@ -11,12 +16,40 @@ interface CheckInUseCaseResponse {
 }
 
 export class CheckInUseCase {
-  constructor(private readonly checkInRepository: CheckInRepository) {}
+  constructor(
+    private readonly checkInRepository: CheckInRepository,
+    private readonly gymRepository: GymRepository
+  ) {}
 
   async execute({
     userId,
-    gymId
+    gymId,
+    userLatitude,
+    userLongitude
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
+    const gym = await this.gymRepository.findById(gymId);
+
+    if (!gym) {
+      throw new ResourceNotFoundError();
+    }
+
+    const distance = getDistanceBetweenCoordinates(
+      {
+        latitude: userLatitude,
+        longitude: userLongitude
+      },
+      {
+        latitude: Number(gym.latitude),
+        longitude: Number(gym.longitude)
+      }
+    );
+
+    const MAX_DISTANCE_IN_KM = 0.1;
+
+    if (distance > MAX_DISTANCE_IN_KM) {
+      throw new Error();
+    }
+
     const checkInOnSameDate = await this.checkInRepository.findByIdOnDate(
       userId,
       new Date()
