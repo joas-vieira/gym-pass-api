@@ -3,22 +3,26 @@ import { InMemoryGymRepository } from '@/repositories/in-memory/in-memory-gym.re
 import { Decimal } from '@prisma/client/runtime/library';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckInUseCase } from './check-in';
+import { CheckInRepository } from '@/repositories/check-in.repository';
+import { GymRepository } from '@/repositories/gym.repository';
+import { MaxNumberOfCheckInsError } from './errors/max-number-of-check-ins.error';
+import { MaxDistanceError } from './errors/max-distance.error';
 
 describe('Check In Use Case', () => {
-  let checkInRepository: InMemoryCheckInRepository;
-  let gymRepository: InMemoryGymRepository;
+  let checkInRepository: CheckInRepository;
+  let gymRepository: GymRepository;
   let sut: CheckInUseCase;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     checkInRepository = new InMemoryCheckInRepository();
     gymRepository = new InMemoryGymRepository();
     sut = new CheckInUseCase(checkInRepository, gymRepository);
 
-    gymRepository.items.push({
+    await gymRepository.create({
       id: 'gym-1',
       name: 'JavaScript Gym',
-      description: '',
-      phone: '',
+      description: null,
+      phone: null,
       latitude: Decimal(0),
       longitude: Decimal(0)
     });
@@ -58,7 +62,7 @@ describe('Check In Use Case', () => {
         userLatitude: 0,
         userLongitude: 0
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError);
   });
 
   it('should be able to check in twice in different days', async () => {
@@ -84,7 +88,7 @@ describe('Check In Use Case', () => {
   });
 
   it('should not be able to check in on distant gym', async () => {
-    gymRepository.items.push({
+    await gymRepository.create({
       id: 'gym-2',
       name: 'Node Gym',
       description: '',
@@ -100,11 +104,11 @@ describe('Check In Use Case', () => {
         userLatitude: -23.37706193512421,
         userLongitude: -53.301014876883755
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(MaxDistanceError);
   });
 
   it('should be able to check in on nearby gym', async () => {
-    gymRepository.items.push({
+    await gymRepository.create({
       id: 'gym-3',
       name: 'Node Gym',
       description: '',
