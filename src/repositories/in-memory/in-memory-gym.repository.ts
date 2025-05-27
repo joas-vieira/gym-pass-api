@@ -16,7 +16,7 @@ export class InMemoryGymRepository implements GymRepository {
     return gym;
   }
 
-  create(data: Prisma.GymCreateInput): Promise<Gym> {
+  async create(data: Prisma.GymCreateInput): Promise<Gym> {
     const gym: Gym = {
       id: data.id ?? randomUUID(),
       name: data.name,
@@ -28,6 +28,6 @@ export class InMemoryGymRepository implements GymRepository {
 
     this.items.push(gym);
 
-    return Promise.resolve(gym);
+    return gym;
   }
 }
