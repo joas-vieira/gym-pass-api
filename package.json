@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/joas-vieira/gym-pass-api#readme",
   "dependencies": {
+    "@fastify/jwt": "9.1.0",
     "@prisma/client": "6.7.0",
     "bcryptjs": "3.0.2",
     "dayjs": "1.11.13",
