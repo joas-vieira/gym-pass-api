@@ -5,9 +5,7 @@ import { UserRepository } from '../user.repository';
 export class PrismaUserRepository implements UserRepository {
   async findById(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
-      where: {
-        id
-      }
+      where: { id }
     });
 
     return user;
@@ -15,9 +13,7 @@ export class PrismaUserRepository implements UserRepository {
 
   async findByEmail(email: string) {
     const user = await prisma.user.findUnique({
-      where: {
-        email
-      }
+      where: { email }
     });
 
     return user;
