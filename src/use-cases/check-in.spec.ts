@@ -1,6 +1,5 @@
 import { InMemoryCheckInRepository } from '@/repositories/in-memory/in-memory-check-in.repository';
 import { InMemoryGymRepository } from '@/repositories/in-memory/in-memory-gym.repository';
-import { Decimal } from '@prisma/client/runtime/library';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckInUseCase } from './check-in';
 import { CheckInRepository } from '@/repositories/check-in.repository';
@@ -23,8 +22,8 @@ describe('Check In Use Case', () => {
       name: 'JavaScript Gym',
       description: null,
       phone: null,
-      latitude: Decimal(0),
-      longitude: Decimal(0)
+      latitude: 0,
+      longitude: 0
     });
 
     vi.useFakeTimers();
@@ -93,8 +92,8 @@ describe('Check In Use Case', () => {
       name: 'Node Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(-23.37845177959174),
-      longitude: new Decimal(-53.289041136312946)
+      latitude: -23.37845177959174,
+      longitude: -53.289041136312946
     });
 
     await expect(() =>
@@ -113,8 +112,8 @@ describe('Check In Use Case', () => {
       name: 'Node Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(-23.37845177959174),
-      longitude: new Decimal(-53.289041136312946)
+      latitude: -23.37845177959174,
+      longitude: -53.289041136312946
     });
 
     const { checkIn } = await sut.execute({
