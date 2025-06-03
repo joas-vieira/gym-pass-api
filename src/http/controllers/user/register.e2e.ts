@@ -14,6 +14,6 @@ describe('Register (e2e)', () => {
       password: '123456'
     });
 
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toEqual(201);
   });
 });
