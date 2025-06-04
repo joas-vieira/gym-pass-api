@@ -1,0 +1,30 @@
+name: Run E2E Tests
+
+on: [pull_request]
+
+jobs:
+  run-e2e-tests:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: bitnami/postgresql:latest
+        env:
+          POSTGRESQL_USERNAME: admin
+          POSTGRESQL_PASSWORD: admin
+          POSTGRESQL_DATABASE: gym-pass
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.15.0
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:e2e
+        env:
+          NODE_ENV: test
+          PORT: 3000
+          DATABASE_URL: postgres://admin:admin@localhost:5432/gym-pass
+          JWT_SECRET: test-secret
